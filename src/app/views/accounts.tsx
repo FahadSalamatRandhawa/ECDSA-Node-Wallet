@@ -26,7 +26,7 @@ export default function Accounts(){
     },[])
 
     function updateAccount(e:string){
-        let obj={};
+        let obj:{[k:string]:number}={};
         obj[e]=wallet[e]
         dispatch(updateaccount(obj))
     }
