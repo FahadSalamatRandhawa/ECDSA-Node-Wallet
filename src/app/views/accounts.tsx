@@ -32,7 +32,7 @@ export default function Accounts(){
     }
    
     return(
-        <div className="h-full w-[420px] flex flex-col justify-evenly rounded-sm px-4 border-2 border-solid border-black/40 shadow-lg shadow-blue-400">
+        <div className=" h-[200px] md:h-full w-auto md:w-[420px] flex flex-col justify-evenly rounded-sm px-4 border-2 border-solid border-black/40 shadow-lg shadow-blue-400">
             <div className=" flex justify-between">
             Accounts
             <AddNew/>

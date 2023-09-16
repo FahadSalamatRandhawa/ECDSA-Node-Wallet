@@ -7,10 +7,8 @@ import { RootState } from "../stores/wallets";
 import { keccak256, keccak224, keccak384, keccak512 } from "ethereum-cryptography/keccak.js";
 import { AlertDialogDemo } from "./alertdialouge";
 import { toHex } from "ethereum-cryptography/utils";
-import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { FormField } from "@/components/ui/form";
-import { useForm } from "react-hook-form"
+
 
 const formSchema = z.object({
   address: z.string().min(2, {
@@ -33,7 +31,7 @@ export default function Transfer(){
         setMessageHash(messageHash)
     },[address,balance])
     return(
-        <div className=" h-full w-[420px] flex flex-col justify-evenly rounded-sm px-4 border-2 border-solid border-black/40 shadow-lg shadow-red-400">
+        <div className=" h-[300px] md:h-full w-auto md:w-[420px] flex flex-col justify-evenly rounded-sm px-4 border-2 border-solid border-black/40 shadow-lg shadow-red-400">
                 Transfer
                 <Input onChange={(e)=>setAddress(e.target.value)} />
                 <Input type="number" onChange={(e)=>{setBalance(parseFloat(e.target.value))}} />
