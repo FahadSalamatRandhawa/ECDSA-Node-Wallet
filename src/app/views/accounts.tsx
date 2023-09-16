@@ -14,12 +14,11 @@ import { useEffect } from 'react';
 
 
 export default function Accounts(){
-    const dispatch=useDispatch<AppDispatch>()
+    const dispatch=useDispatch()
     const wallet=useSelector((state:RootState)=>state.wallet.wallet)
     const account=useSelector((state:RootState)=>state.wallet.account)
     const fetchwallets=async()=>{
-        const {ledger}=await(await fetch('http://localhost:3000/api',{method:"GET",cache:"no-cache"})).json()
-        console.log(ledger)
+        const {ledger}=await(await fetch('/api',{method:"GET",cache:"no-cache"})).json()
         dispatch(updatewallet(ledger))
     }
     useEffect(()=>{
@@ -31,9 +30,7 @@ export default function Accounts(){
         obj[e]=wallet[e]
         dispatch(updateaccount(obj))
     }
-    if(account){
-        console.log()
-    }
+   
     return(
         <div className="h-full w-[420px] flex flex-col justify-evenly rounded-sm px-4 border-2 border-solid border-black/40 shadow-lg shadow-blue-400">
             <div className=" flex justify-between">
@@ -50,7 +47,7 @@ export default function Accounts(){
                     ))}
                 </SelectContent>
          </Select>
-            {account&&<Label>{account[Object.keys(account)[0]].balance}</Label>}
+            {account&&<Label>{(account[Object.keys(account)[0]])}</Label>}
             {!account&&<Label>0</Label>}
         </div>
     )

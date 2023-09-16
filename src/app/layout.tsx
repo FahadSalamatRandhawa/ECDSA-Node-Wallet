@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Provider } from 'react-redux'
 import { WalletStore } from './stores/wallets'
+import { Toaster } from "@/components/ui/toaster"
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -28,7 +29,7 @@ export default function RootLayout({
           
       children
       }
-      
+      <Toaster />
       </body>
       </Provider>
     </html>

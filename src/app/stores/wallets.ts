@@ -7,8 +7,8 @@ export interface WalletState {
 }
 
 const initialState: WalletState = {
-  wallet: {},
-  account: { random: { balance: 0 } },
+  wallet: null,
+  account: { default: 0 },
 };
 
 export const WalletSlice = createSlice({

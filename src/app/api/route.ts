@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-let ledger: Record<string, { balance: number }> = {
-  default1: { balance: 10 },
+let ledger: Record<string, number> = {
+  default1: 5,
 };
 export async function GET(reques: NextRequest) {
   return NextResponse.json({ ledger, success: "true" });
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const transaction = await request.json();
     console.log(transaction, "in API");
-    ledger[transaction.publicAddress] = { balance: transaction.initialBalance };
+    ledger[transaction.publicAddress] = transaction.initialBalance;
   } catch (e) {
     return new NextResponse(JSON.stringify({ success: "fail" }), {
       status: 400,
@@ -21,9 +21,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ ledger, success: "true" });
 }
 import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
-import { SigType } from "../views/alertdialouge";
-import { keccak256 } from "ethereum-cryptography/keccak";
-import { toHex } from "ethereum-cryptography/utils";
 import { publicKeyToAddress } from "../helpers";
 
 export async function PUT(request: NextRequest) {
@@ -60,10 +57,17 @@ export async function PUT(request: NextRequest) {
       keyArray
     );
     //console.log("AFTER VERIFY");
-    //console.log(verified);
+    console.log(amount);
     if (verified && recoveredAddress == sender) {
       console.log("INSIDE VERIFIED");
-      return NextResponse.json({ success: "true", verified });
+      ledger[sender] = ledger[sender] - amount;
+      if (ledger[reciever]) {
+        ledger[reciever] = ledger[reciever] + amount;
+      } else {
+        ledger[reciever] = amount;
+      }
+      console.log(ledger[reciever]);
+      return NextResponse.json({ success: "true", ledger });
     }
     console.log("VerifyFailed");
     console.log(sender, recoveredAddress);

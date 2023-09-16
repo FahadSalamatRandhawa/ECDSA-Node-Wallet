@@ -1,6 +1,5 @@
 'use client'
 import { secp256k1 } from "ethereum-cryptography/secp256k1.js";
-import { sha256 } from "ethereum-cryptography/sha256.js";
 import {toHex} from 'ethereum-cryptography/utils'
 import { useState } from "react";
 import {
@@ -18,12 +17,16 @@ import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { updatewallet } from "./stores/wallets";
 import { publicKeyToAddress } from "./helpers";
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast";
+
 
 export default function AddNew(){
     const dispatch=useDispatch()
     const [privateKey,setPrivateKey]=useState<string>()
     const [publicKey,setPublicKey]=useState<string>()
     const [initialBalance,setinitialBalance]=useState(0);
+    const { toast } = useToast()
 
     async function generateKeyPairs(){
         const randomPrivatekey=toHex((secp256k1.utils.randomPrivateKey()));
@@ -36,19 +39,30 @@ export default function AddNew(){
         setPublicKey(publicAddress)
         const transaction={publicAddress,initialBalance}
         console.log(transaction,'transact obj')
-        const res=await fetch('http://localhost:3000/api',{method:"POST", cache:"no-cache",body:JSON.stringify(transaction)})
+        const res=await fetch('/api',{method:"POST", cache:"no-cache",body:JSON.stringify(transaction)})
     }
 
     async function pushtoledger() {
         try{
           await generateKeyPairs()
         
-        const {ledger}=await (await fetch('/api',{method:"GET",cache:"no-cache"})).json()
-        console.log(ledger)
-        dispatch(updatewallet(ledger))
+          const {ledger}=await (await fetch('/api',{method:"GET",cache:"no-cache"})).json()
+          console.log(ledger)
+          dispatch(updatewallet(ledger))
+          toast({
+            title: "New keys generated",
+            description: "please save your private key, it will only be showed this once",
+          })
+
         }catch(e){
           console.log('ERROR in generatign new keys')
           console.log(e)
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request.",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          })
         }
     }
 
@@ -57,7 +71,7 @@ export default function AddNew(){
         <DialogTrigger asChild>
           <Button variant="outline">Add new wallet</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:min-w-[425px] max-w-max">
           <DialogHeader>
             <DialogTitle>New Account</DialogTitle>
             <DialogDescription>
@@ -75,8 +89,7 @@ export default function AddNew(){
           <DialogFooter>
             <Button type="submit" onClick={pushtoledger}>New Wallet</Button>
           </DialogFooter>
-          {privateKey&&<div>{privateKey}</div>}
-          {publicKey&&<div>{publicKey}</div>}
+          {privateKey&&<div className=" select-all ...">{privateKey}</div>}
         </DialogContent>
       </Dialog>
     )
